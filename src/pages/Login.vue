@@ -17,7 +17,7 @@
                     filled
                     label="密码 "
                     lazy-rules
-                    type="time"
+                    type="password"
                     model-value=""
                     :rules="[val => (val && val.length > 0) || '请输入密码']"
                 />
