@@ -3,13 +3,11 @@
         <q-header elevated class="bg-primary text-white">
             <q-toolbar>
                 <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />
-
-                <q-toolbar-title>
-                    <!--                    <q-avatar>-->
-                    <!--                        <img src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg">-->
-                    <!--                    </q-avatar>-->
-                    原力音乐
-                </q-toolbar-title>
+                <q-toolbar-title> 原力音乐</q-toolbar-title>
+                <q-space />
+                <q-avatar color="teal" text-color="white" @click="nicknameFirstWord">{{
+                    nicknameFirstWord
+                }}</q-avatar>
             </q-toolbar>
         </q-header>
 
@@ -23,24 +21,24 @@
     </q-layout>
 </template>
 
-<script setup>
-import { ref } from 'vue'
+<script>
+import { computed, ref } from 'vue'
+import { useStore } from 'vuex'
 
-const leftDrawerOpen = ref(false)
-
-function toggleLeftDrawer() {
-    leftDrawerOpen.value = !leftDrawerOpen.value
+export default {
+    name: 'Layout',
+    setup() {
+        const leftDrawerOpen = ref(false)
+        const store = useStore()
+        return {
+            leftDrawerOpen,
+            nicknameFirstWord: computed(() => store.getters.nicknameFirstWord),
+            toggleLeftDrawer() {
+                leftDrawerOpen.value = !leftDrawerOpen.value
+            }
+        }
+    }
 }
-
-// export default {
-//     setup () {
-//
-//         return {
-//             leftDrawerOpen,
-//
-//         }
-//     }
-// }
 </script>
 
 <style scoped></style>
