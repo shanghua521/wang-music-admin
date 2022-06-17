@@ -2,14 +2,14 @@
     <div class="login-page form">
         <q-card class="login-from-content">
             <div class="title">殇花音乐后台</div>
-            <q-form class="q-gutter-md" @submit="onSubmit" @reset="onReset">
+            <q-form class="q-gutter-md" @submit="onSubmit(username, password)">
                 <q-input
-                    v-model="name"
+                    v-model="username"
                     filled
                     label="用户名"
                     lazy-rules
                     :rules="[val => (val && val.length > 0) || '请输入用户名']"
-                    model-value="name"
+                    model-value=""
                 />
 
                 <q-input
@@ -19,10 +19,11 @@
                     lazy-rules
                     type="password"
                     model-value=""
+                    autocomplete
                     :rules="[val => (val && val.length > 0) || '请输入密码']"
                 />
 
-                <q-toggle v-model="accept" label="记住我" />
+                <q-toggle v-model="accept" label="记住i我" />
 
                 <div>
                     <q-btn class="full-width" label="登录" type="submit" color="primary" />
@@ -33,46 +34,30 @@
 </template>
 
 <script>
-import { useQuasar } from 'quasar'
 import { ref } from 'vue'
+import { useStore } from 'vuex'
+import { useRoute, useRouter } from 'vue-router'
 
 export default {
     name: 'Login',
     setup() {
-        const $q = useQuasar()
-
-        const name = ref('')
+        const username = ref('')
         const password = ref('')
         const accept = ref(false)
+        const store = useStore()
+        const router = useRouter()
+        const route = useRoute()
+        const onSubmit = (username, password) => {
+            store.dispatch('login', { username, password }).then(() => {
+                router.push({ path: route.query.redirect || '/' })
+            })
+        }
 
         return {
-            name,
+            username,
             password,
             accept,
-
-            onSubmit() {
-                if (accept.value !== true) {
-                    $q.notify({
-                        color: 'red-5',
-                        textColor: 'white',
-                        icon: 'warning',
-                        message: 'You need to accept the license and terms first'
-                    })
-                } else {
-                    $q.notify({
-                        color: 'green-4',
-                        textColor: 'white',
-                        icon: 'cloud_done',
-                        message: 'Submitted'
-                    })
-                }
-            },
-
-            onReset() {
-                name.value = ''
-                password.value = ''
-                accept.value = false
-            }
+            onSubmit
         }
     }
 }
