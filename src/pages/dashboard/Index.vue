@@ -12,7 +12,9 @@ export default {
     setup() {
         const store = useStore()
         return {
-            nickname: computed(() => store.state.user.nickname),
+            nickname: computed(() =>
+                store.state.currentUser ? store.state.currentUser.nickname : ''
+            ),
             logout: () => store.dispatch('logout').then(() => window.location.reload())
         }
     }

@@ -1,27 +1,32 @@
-import { getToken, removeToken, setToken } from '../../utils/auth.js'
-import { login } from '../../api/user.js'
+import {
+    getCurrentUser,
+    getToken,
+    removeCurrentUser,
+    removeToken,
+    setCurrentUser,
+    setToken
+} from '../../utils/auth.js'
+import { createTokens } from '../../api/token.js'
+import { me } from '../../api/user.js'
 
 const state = () => ({
-    nickname: '',
     token: getToken(),
-    username: '',
-    roles: []
+    currentUser: getCurrentUser()
 })
 
 const getters = {
     nicknameFirstWord: state => {
-        return state.nickname.at(0)
+        return state.currentUser ? state.currentUser?.nickname.at(0) : ''
     }
 }
 
 const actions = {
     login({ commit }, { username, password }) {
         return new Promise((resolve, reject) => {
-            login(username.trim(), password)
-                .then(response => {
-                    const authorization = response.headers.authorization
-                    commit('SET_TOKEN', authorization)
-                    setToken(authorization)
+            createTokens(username.trim(), password)
+                .then(token => {
+                    commit('SET_TOKEN', token)
+                    setToken(token)
                     resolve()
                 })
                 .catch(error => {
@@ -32,8 +37,21 @@ const actions = {
     logout({ commit }) {
         commit('SET_TOKEN', '')
         setToken('')
-        commit('SET_ROLES', [])
         removeToken()
+        removeCurrentUser()
+    },
+    fetchCurrentUser({ commit }) {
+        return new Promise((resolve, reject) => {
+            me()
+                .then(currentUser => {
+                    commit('SET_CURRENT_USER', currentUser)
+                    setCurrentUser(currentUser)
+                    resolve(currentUser)
+                })
+                .catch(error => {
+                    reject(error)
+                })
+        })
     }
 }
 
@@ -41,11 +59,8 @@ const mutations = {
     SET_TOKEN: (state, token) => {
         state.token = token
     },
-    SET_NICKNAME: (state, nickname) => {
-        state.nickname = nickname
-    },
-    SET_ROLES: (state, roles) => {
-        state.roles = roles
+    SET_CURRENT_USER: (state, currentUser) => {
+        state.currentUser = currentUser
     }
 }
 

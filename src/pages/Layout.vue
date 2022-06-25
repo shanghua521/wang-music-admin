@@ -5,14 +5,29 @@
                 <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />
                 <q-toolbar-title> 原力音乐</q-toolbar-title>
                 <q-space />
-                <q-avatar color="teal" text-color="white" @click="nicknameFirstWord">{{
-                    nicknameFirstWord
-                }}</q-avatar>
+                <q-avatar color="teal" text-color="white" @click="nicknameFirstWord">
+                    {{ nicknameFirstWord }}
+                </q-avatar>
             </q-toolbar>
         </q-header>
 
         <q-drawer v-model="leftDrawerOpen" show-if-above side="left" bordered>
-            <!-- drawer content -->
+            <q-list padding class="text-primary">
+                <q-item
+                    v-for="item in menuRoutes"
+                    :key="item.meta.title"
+                    v-ripple
+                    clickable
+                    active-class="menu-active"
+                    :active="item.name === route.name"
+                    :to="item.path"
+                >
+                    <q-item-section avatar>
+                        <q-icon :name="item.meta.icon" />
+                    </q-item-section>
+                    <q-item-section>{{ item.meta.title }}</q-item-section>
+                </q-item>
+            </q-list>
         </q-drawer>
 
         <q-page-container>
@@ -24,14 +39,20 @@
 <script>
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
+import { menuRoutes } from '../router/index.js'
+import { useRoute } from 'vue-router'
 
 export default {
     name: 'Layout',
     setup() {
         const leftDrawerOpen = ref(false)
         const store = useStore()
+        const route = useRoute()
+
         return {
             leftDrawerOpen,
+            menuRoutes,
+            route,
             nicknameFirstWord: computed(() => store.getters.nicknameFirstWord),
             toggleLeftDrawer() {
                 leftDrawerOpen.value = !leftDrawerOpen.value
@@ -41,4 +62,9 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.menu-active {
+    color: white !important;
+    background-color: #f2c037;
+}
+</style>

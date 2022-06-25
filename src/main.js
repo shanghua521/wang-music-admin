@@ -4,7 +4,7 @@ import { router } from './router'
 import store from './store'
 import './permission.js'
 
-import { Quasar } from 'quasar'
+import { Quasar, Notify } from 'quasar'
 import '@quasar/extras/material-icons/material-icons.css'
 import 'quasar/src/css/index.sass'
 
@@ -16,6 +16,6 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 myApp.use(Quasar, {
-    plugins: {}
+    plugins: { Notify }
 })
 myApp.mount('#app')
