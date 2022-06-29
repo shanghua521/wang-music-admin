@@ -43,7 +43,7 @@ export default {
     name: 'Index',
     setup() {
         const pagination = ref({
-            page: 1,
+            page: 0,
             rowsPerPage: 2,
             rowsNumber: 2
         })

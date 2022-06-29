@@ -7,6 +7,13 @@
                 <q-space />
                 <q-avatar color="teal" text-color="white" @click="nicknameFirstWord">
                     {{ nicknameFirstWord }}
+                    <q-menu fit>
+                        <q-list style="min-width: 100px">
+                            <q-item v-close-popup clickable @click="handleLogout">
+                                <q-item-section> 退出</q-item-section>
+                            </q-item>
+                        </q-list>
+                    </q-menu>
                 </q-avatar>
             </q-toolbar>
         </q-header>
@@ -48,11 +55,13 @@ export default {
         const leftDrawerOpen = ref(false)
         const store = useStore()
         const route = useRoute()
+        const handleLogout = () => store.dispatch('logout').then(() => window.location.reload())
 
         return {
             leftDrawerOpen,
             menuRoutes,
             route,
+            handleLogout,
             nicknameFirstWord: computed(() => store.getters.nicknameFirstWord),
             toggleLeftDrawer() {
                 leftDrawerOpen.value = !leftDrawerOpen.value

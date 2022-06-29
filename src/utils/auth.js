@@ -11,8 +11,8 @@ export const setToken = token => {
     return Cookie.set(TokenKey, token)
 }
 
-export const removeToken = token => {
-    Cookie.remove(token)
+export const removeToken = () => {
+    Cookie.remove(TokenKey)
 }
 
 export const getCurrentUser = () => {

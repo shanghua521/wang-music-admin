@@ -1,6 +1,7 @@
 import axios from 'axios'
-import { Notify } from 'quasar'
+// import { Notify } from 'quasar'
 import store from '../store/index.js'
+import { Notify } from 'quasar'
 
 const baseURL = import.meta.env.VITE_API_HOST
 const tokenPrefix = 'Bearer '
@@ -13,17 +14,25 @@ instance.interceptors.request.use(config => {
     }
     return config
 })
+
+function handlerErrorResponse(response) {
+    if (response.status === 401 || response.status === 403) {
+        store.dispatch('logout').then(() => window.location.reload())
+    }
+    const message = Array.isArray(response.data) ? response.data[0].message : response.data.message
+    Notify.create({
+        type: 'negative',
+        message: message,
+        position: 'top'
+    })
+}
+
 instance.interceptors.response.use(
     response => {
         return response.data
     },
     error => {
-        store.dispatch('user/logout')
-        Notify.create({
-            type: 'negative',
-            message: error.message,
-            position: 'top'
-        })
+        handlerErrorResponse(error.response)
         return Promise.reject(error)
     }
 )
