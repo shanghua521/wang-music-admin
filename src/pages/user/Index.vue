@@ -1,9 +1,8 @@
 <template>
     <div class="page">
-        <q-btn color="primary">添加用户</q-btn>
+        <q-btn color="primary" @click="showDialog">添加用户</q-btn>
         <q-table
             v-model:pagination="pagination"
-            title="Treats"
             :rows="data"
             :columns="columns"
             row-key="name"
@@ -15,14 +14,18 @@
                 color="grey-8"
                 :max="pagination.rowsNumber"
                 size="sm"
+                @click="fetchData"
             />
         </div>
+        <CreateDialog v-if="show" @hide="hideDialog" @create-success="fetchData" />
     </div>
 </template>
 
-<script>
+<script setup>
+import { useUserSearch } from '../../composables/useUserSearch.js'
+import { useToggleDialog } from '../../composables/useToggleDialog.js'
+import CreateDialog from './CreateDialog.vue'
 import { ref } from 'vue'
-import { search } from '../../api/user.js'
 
 const columns = [
     {
@@ -38,37 +41,9 @@ const columns = [
         label: '昵称'
     }
 ]
-
-export default {
-    name: 'Index',
-    setup() {
-        const pagination = ref({
-            page: 0,
-            rowsPerPage: 2,
-            rowsNumber: 2
-        })
-
-        const data = ref([])
-
-        const fetchData = () => {
-            search({ page: pagination.value.page, size: pagination.value.rowsPerPage }).then(
-                response => {
-                    data.value = response.content
-                    pagination.value.page = response.number + 1
-                    pagination.value.rowsPerPage = response.size
-                    pagination.value.rowsNumber = response.totalElements
-                    // pagination.value.page = res.
-                }
-            )
-        }
-        fetchData()
-        return {
-            pagination,
-            columns,
-            data
-        }
-    }
-}
+const show = ref(false)
+const { showDialog, hideDialog } = useToggleDialog(show)
+const { data, pagination, fetchData } = useUserSearch()
 </script>
 
 <style scoped></style>

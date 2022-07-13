@@ -19,12 +19,21 @@ function handlerErrorResponse(response) {
     if (response.status === 401 || response.status === 403) {
         store.dispatch('logout').then(() => window.location.reload())
     }
-    const message = Array.isArray(response.data) ? response.data[0].message : response.data.message
-    Notify.create({
-        type: 'negative',
-        message: message,
-        position: 'top'
-    })
+    if (Array.isArray(response.data)) {
+        response.data.forEach(item => {
+            Notify.create({
+                type: 'negative',
+                message: item.message,
+                position: 'top'
+            })
+        })
+    } else {
+        Notify.create({
+            type: 'negative',
+            message: response.data.message,
+            position: 'top'
+        })
+    }
 }
 
 instance.interceptors.response.use(
